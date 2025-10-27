@@ -13,7 +13,7 @@ export default function TodosScreen() {
             <TouchableOpacity style={styles.todoContent} onPress={() => toggleTodo(item.id)}>
 
                 <View style={[styles.todoCheckbox, item.completed && styles.checkboxChecked]}>
-                    {item.completed && <Text style={styles.checkmark}>✅</Text>}
+                    {item.completed && <Text style={styles.checkmark}>✓</Text>}
                 </View>
 
                 <Text style={[styles.todoText, item.completed && styles.todoTextCompleted]}                >
@@ -52,7 +52,7 @@ export default function TodosScreen() {
                         setInputText("")
                     }}
                 >
-                    <Text style={styles.addButtonText}>➕</Text>
+                    <Text style={styles.addButtonText}>+</Text>
                 </TouchableOpacity>
 
             </View>
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     },
 
     addButton: {
-        backgroundColor: '#09e639ff',
+        backgroundColor: "#2cb64aff",
         width: 50,
         height: 50,
         borderRadius: 25,
@@ -145,14 +145,14 @@ const styles = StyleSheet.create({
         height: 24,
         borderRadius: 12,
         borderWidth: 2,
-        borderColor: '#007AFF',
+        borderColor: '#2cb64aff',
         marginRight: 12,
         justifyContent: 'center',
         alignItems: 'center',
     },
 
     checkboxChecked: {
-        backgroundColor: '#007AFF',
+        backgroundColor: '#2cb64aff',
     },
 
     checkmark: {
