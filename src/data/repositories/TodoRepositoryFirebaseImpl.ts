@@ -1,9 +1,12 @@
-import { TodoRepository } from "@/src/domain/repositories/TodoRepository";
-import { SQLiteTodoDataSource } from "../datasources/SQLiteTodoDataSource";
-import { CreateTodoDTO, Todo, UpdateTodoDTO } from "@/src/domain/entities/Todo";
+import { TodoRepository } from '@/src/domain/repositories/TodoRepository';
+import { Todo, CreateTodoDTO, UpdateTodoDTO } from '@/src/domain/entities/Todo';
+import { FirebaseTodoDataSource } from '../datasources/FirebaseTodoDataSource';
 
-export class TodoRepositoryImpl implements TodoRepository {
-    constructor(private dataSource: SQLiteTodoDataSource) { }
+// 🟢 EXACTAMENTE LA MISMA ESTRUCTURA que TodoRepositoryImpl
+// Solo cambia el data source que usa
+
+export class TodoRepositoryFirebaseImpl implements TodoRepository {
+    constructor(private dataSource: FirebaseTodoDataSource) { }
 
     async getAll(): Promise<Todo[]> {
         return await this.dataSource.getAllTodos();

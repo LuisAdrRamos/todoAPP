@@ -2,12 +2,12 @@ import { container } from "@/src/di/container";
 import { Todo } from "@/src/domain/entities/Todo";
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
- 
+
 export const useTodos = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
- 
+
   const loadTodos = useCallback(async () => {
     try {
       setLoading(true);
@@ -22,11 +22,11 @@ export const useTodos = () => {
       setLoading(false);
     }
   }, []);
- 
+
   useEffect(() => {
     loadTodos();
   }, [loadTodos]);
- 
+
   const addTodo = async (title: string): Promise<boolean> => {
     try {
       const newTodo = await container.createTodo.execute({ title });
@@ -39,7 +39,7 @@ export const useTodos = () => {
       return false;
     }
   };
- 
+
   const toggleTodo = async (id: string): Promise<void> => {
     try {
       const updatedTodo = await container.toggleTodo.execute(id);
@@ -48,7 +48,7 @@ export const useTodos = () => {
       Alert.alert("Error", "No se pudo actualizar la tarea");
     }
   };
- 
+
   const deleteTodo = async (id: string): Promise<void> => {
     try {
       await container.deleteTodo.execute(id);
@@ -57,7 +57,7 @@ export const useTodos = () => {
       Alert.alert("Error", "No se pudo eliminar la tarea");
     }
   };
- 
+
   return {
     todos,
     loading,

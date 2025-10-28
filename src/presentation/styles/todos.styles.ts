@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
- 
+
 export interface TodosTheme {
   background: string;
   surface: string;
@@ -10,7 +10,7 @@ export interface TodosTheme {
   border: string;
   placeholder: string;
 }
- 
+
 /**
 * Factory de estilos que recibe el tema como parametro
 * Esto permite estilos dinmicos basados en dark/light mode
@@ -129,7 +129,7 @@ export const createStyles = (theme: TodosTheme) =>
       fontSize: 14,
     },
   });
- 
+
 /**
 * Tema por defecto (light mode)
 */
@@ -143,7 +143,7 @@ export const defaultLightTheme: TodosTheme = {
   border: "#e0e0e0",
   placeholder: "#999999",
 };
- 
+
 /**
 * Tema oscuro (dark mode)
 */
