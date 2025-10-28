@@ -5,7 +5,7 @@ export interface Todo {
   createdAt: Date;
 }
 
-export interface CreeateTodoDTO {
+export interface CreateTodoDTO {
   title: string;
 }
 
