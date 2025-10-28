@@ -1,4 +1,4 @@
-import { CreateTodoDTO, Todo, UpdateTodoDTO } from "../entities/Todo";
+import { CreateTodoDTO, Todo } from "../entities/Todo";
 import { TodoRepository } from "../repositories/TodoRepository";
 
 export class CreateTodo {
