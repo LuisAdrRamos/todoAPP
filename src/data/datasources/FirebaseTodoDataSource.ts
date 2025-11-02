@@ -8,6 +8,7 @@ import {
     deleteDoc,
     query,
     orderBy,
+    where,
     Timestamp,
 } from "firebase/firestore";
 
@@ -21,9 +22,10 @@ export class FirebaseTodoDataSource {
         console.log("Firebase initialized");
     }
 
-    async getAllTodos(): Promise<Todo[]> {
+    async getAllTodos(userId: string): Promise<Todo[]> {
         const q = query(
             collection(db, this.collectionName),
+            where("userId", "==", userId),
             orderBy("createdAt", "desc")
         );
 
@@ -36,6 +38,7 @@ export class FirebaseTodoDataSource {
                 title: data.title,
                 completed: data.completed,
                 createdAt: data.createdAt.toDate(),
+                userId: data.userId,
             };
         });
     }
@@ -52,14 +55,16 @@ export class FirebaseTodoDataSource {
             title: data.title,
             completed: data.completed,
             createdAt: data.createdAt.toDate(),
+            userId: data.userId,
         };
     }
 
-    async createTodo(title: string): Promise<Todo> {
+    async createTodo(title: string, userId: string): Promise<Todo> {
         const newTodo = {
             title,
             completed: false,
             createdAt: Timestamp.now(),
+            userId,
         };
 
         const docRef = await addDoc(collection(db, this.collectionName), newTodo);
@@ -69,6 +74,7 @@ export class FirebaseTodoDataSource {
             title,
             completed: false,
             createdAt: new Date(),
+            userId,
         };
     }
 

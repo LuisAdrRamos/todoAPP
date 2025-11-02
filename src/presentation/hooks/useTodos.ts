@@ -2,22 +2,33 @@ import { container } from "@/src/di/container";
 import { Todo } from "@/src/domain/entities/Todo";
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
+import { useAuth } from "./useAuth";
 
 export const useTodos = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const loadTodos = useCallback(async () => {
+
+    if (!user) {
+      setTodos([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
-      const result = await container.getAllTodos.execute();
+      const result = await container.getAllTodos.execute(user.id);
       setTodos(result);
+
     } catch (err) {
       const message = err instanceof Error ? err.message : "Error desconocido";
       setError(message);
       Alert.alert("Error", "No se pudieron cargar las tareas");
+
     } finally {
       setLoading(false);
     }
@@ -28,13 +39,19 @@ export const useTodos = () => {
   }, [loadTodos]);
 
   const addTodo = async (title: string): Promise<boolean> => {
+    
+    if (!user) {
+      Alert.alert("Error", "Usuario no autenticado");
+      return false;
+    }
+
     try {
-      const newTodo = await container.createTodo.execute({ title });
+      const newTodo = await container.createTodo.execute({ title, userId: user.id });
       setTodos([newTodo, ...todos]);
       return true;
+
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Error al agregar tarea";
+      const message = err instanceof Error ? err.message : "Error al agregar tarea";
       Alert.alert("Error", message);
       return false;
     }
@@ -44,6 +61,7 @@ export const useTodos = () => {
     try {
       const updatedTodo = await container.toggleTodo.execute(id);
       setTodos(todos.map((t) => (t.id === id ? updatedTodo : t)));
+
     } catch (err) {
       Alert.alert("Error", "No se pudo actualizar la tarea");
     }
@@ -53,6 +71,7 @@ export const useTodos = () => {
     try {
       await container.deleteTodo.execute(id);
       setTodos(todos.filter((t) => t.id !== id));
+
     } catch (err) {
       Alert.alert("Error", "No se pudo eliminar la tarea");
     }

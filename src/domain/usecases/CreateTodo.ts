@@ -12,6 +12,11 @@ export class CreateTodo {
         if (data.title.length > 200) {
             throw new Error("Title must be less than 200 characters");
         }
+
+        if (!data.userId) {
+            throw new Error("User ID is required");
+        }
+
         return await this.repository.create(data);
     }
 }

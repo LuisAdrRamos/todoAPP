@@ -128,6 +128,48 @@ export const createStyles = (theme: TodosTheme) =>
       marginTop: 10,
       fontSize: 14,
     },
+    // AGREGAR ESTOS ESTILOS
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      padding: 15,
+      backgroundColor: theme.primary, // Usamos el primary del tema
+      marginBottom: 10,
+      marginTop: 20, // Ajuste para el notch en algunos dispositivos
+      borderRadius: 8,
+    },
+    userAvatarPlaceholder: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      marginRight: 10,
+      backgroundColor: theme.primaryText, // Color opuesto o un tono más oscuro
+      justifyContent: "center",
+      alignItems: "center",
+      borderWidth: 2,
+      borderColor: theme.surface,
+    },
+    userAvatarText: {
+      color: theme.primary,
+      fontSize: 18,
+      fontWeight: "bold",
+    },
+    userName: {
+      flex: 1,
+      color: theme.primaryText,
+      fontSize: 16,
+      fontWeight: "bold",
+    },
+    logoutButton: {
+      padding: 10,
+      backgroundColor: theme.surface, // Fondo diferente para el botón
+      borderRadius: 8,
+      marginLeft: 10,
+    },
+    logoutText: {
+      color: theme.text, // Color del texto normal para el botón
+      fontWeight: "bold",
+    },
   });
 
 /**
