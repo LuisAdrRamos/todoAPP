@@ -7,7 +7,7 @@ export const useAuth = () => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    
+
     // Observar cambios de autenticación 
     useEffect(() => {
         const unsubscribe =
@@ -18,7 +18,7 @@ export const useAuth = () => {
         // Cleanup: desuscribirse cuando el componente se desmonte 
         return () => unsubscribe();
     }, []);
-    
+
     const register = async (
         email: string,
         password: string,
@@ -39,6 +39,48 @@ export const useAuth = () => {
             setError(err.message);
             return false;
 
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const updateProfile = async (displayName: string): Promise<boolean> => {
+        try {
+            if (!user) {
+                setError("No estás autenticado.");
+                return false;
+            }
+
+            setLoading(true);
+            setError(null);
+
+            const updatedUser = await container.updateProfile.execute(
+                user.id,
+                displayName
+            );
+
+            // Actualizar el estado local con el usuario actualizado
+            setUser(updatedUser);
+            return true;
+        } catch (err: any) {
+            setError(err.message);
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const forgotPassword = async (email: string): Promise<boolean> => {
+        try {
+            setLoading(true);
+            setError(null);
+            
+            await container.forgotPassword.execute(email);
+            
+            return true; // Éxito (email enviado o no encontrado, manejado por el backend)
+        } catch (err: any) {
+            setError(err.message);
+            return false;
         } finally {
             setLoading(false);
         }
@@ -84,6 +126,8 @@ export const useAuth = () => {
         loading,
         error,
         register,
+        updateProfile,
+        forgotPassword,
         login,
         logout,
         isAuthenticated: !!user,

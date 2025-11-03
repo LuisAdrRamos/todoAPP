@@ -14,6 +14,9 @@ import { LoginUser } from '../domain/usecases/LoginUser';
 import { LogoutUser } from '../domain/usecases/LogoutUser';
 import { GetCurrentUser } from '../domain/usecases/GetCurrentUser';
 
+import { UpdateProfile } from '../domain/usecases/updateProfile';
+import { ForgotPassword } from '../domain/usecases/ForgotPassword';
+
 class DIContainer {
 
   private static instance: DIContainer;
@@ -27,6 +30,9 @@ class DIContainer {
   private _loginUser?: LoginUser;
   private _logoutUser?: LogoutUser;
   private _getCurrentUser?: GetCurrentUser;
+
+  private _updateProfile?: UpdateProfile;
+  private _forgotPassword?: ForgotPassword;
 
   private constructor() { }
 
@@ -82,6 +88,20 @@ class DIContainer {
       this._registerUser = new RegisterUser(this.authRepository);
     }
     return this._registerUser;
+  }
+
+  get updateProfile(): UpdateProfile {
+    if (!this._updateProfile) {
+      this._updateProfile = new UpdateProfile(this.authRepository);
+    }
+    return this._updateProfile;
+  }
+
+  get forgotPassword(): ForgotPassword {
+    if (!this._forgotPassword) {
+      this._forgotPassword = new ForgotPassword(this.authRepository);
+    }
+    return this._forgotPassword;
   }
 
   get loginUser(): LoginUser {

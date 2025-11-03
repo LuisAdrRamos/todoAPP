@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
     View,
     Text,
@@ -10,36 +10,34 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
-} from "react-native";
-import { useAuth } from "@/src/presentation/hooks/useAuth";
-import { useRouter } from "expo-router";
+} from 'react-native';
+import { useAuth } from '@/src/presentation/hooks/useAuth';
+import { useRouter } from 'expo-router';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
-export default function LoginScreen() {
+// Usaremos los estilos base de Login/Register
+export default function ForgotPasswordScreen() {
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const { login, loading, error } = useAuth();
+    const { forgotPassword, loading, error } = useAuth();
     const router = useRouter();
+    const colorScheme = useColorScheme();
 
-    const handleLogin = async () => {
-        const success = await login(email, password);
+    const handlePasswordReset = async () => {
+        const success = await forgotPassword(email);
         if (success) {
-            router.replace("/(tabs)/todos");
+            Alert.alert(
+                "Email Enviado",
+                "Si existe una cuenta con ese email, recibirás un enlace para recuperar tu contraseña.",
+                [{ text: "OK", onPress: () => router.back() }]
+            );
         } else {
-            Alert.alert("Error", error || "No se pudo iniciar sesión");
+            Alert.alert("Error", error || "No se pudo enviar el email.");
         }
-    };
-
-    const goToRegister = () => {
-        router.push("register" as any);
-    };
-
-    const goToForgotPassword = () => {
-        router.push("forgotPassword" as any);
     };
 
     return (
         <KeyboardAvoidingView
-            style={styles.container}
+            style={[styles.container, colorScheme === 'dark' && styles.containerDark]}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             <ScrollView
@@ -47,48 +45,35 @@ export default function LoginScreen() {
                 keyboardShouldPersistTaps="handled"
             >
                 <View style={styles.content}>
-                    <Text style={styles.title}>TodoApp</Text>
-                    <Text style={styles.subtitle}>Iniciar Sesión</Text>
-
+                    <Text style={[styles.title, colorScheme === 'dark' && styles.textDark]}>Recuperar Contraseña</Text>
+                    <Text style={[styles.subtitle, colorScheme === 'dark' && styles.textSecondaryDark]}>Ingresa tu email para recibir un enlace de recuperación.</Text>
+                    
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, colorScheme === 'dark' && styles.inputDark]}
                         placeholder="Email"
                         value={email}
                         onChangeText={setEmail}
                         keyboardType="email-address"
                         autoCapitalize="none"
                         autoCorrect={false}
+                        placeholderTextColor={colorScheme === 'dark' ? '#777' : '#999'}
                     />
-
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Contraseña"
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry
-                    />
-
+                    
                     <TouchableOpacity
                         style={[styles.button, loading && styles.buttonDisabled]}
-                        onPress={handleLogin}
+                        onPress={handlePasswordReset}
                         disabled={loading}
                     >
                         {loading ? (
                             <ActivityIndicator color="#fff" />
                         ) : (
-                            <Text style={styles.buttonText}>Entrar</Text>
+                            <Text style={styles.buttonText}>Enviar Email</Text>
                         )}
                     </TouchableOpacity>
-
-                    <TouchableOpacity onPress={goToForgotPassword} style={styles.LinkButton}>
-                        <Text style={styles.LinkTextForgot}>
-                            ¿Olvidaste tu contraseña?
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={goToRegister} style={styles.LinkButton}>
-                        <Text style={styles.LinkText}>
-                            ¿No tienes cuenta? <Text style={styles.LinkTextBold}>Regístrate</Text>
+                    
+                    <TouchableOpacity onPress={() => router.back()} style={styles.LinkButton}>
+                        <Text style={[styles.LinkText, colorScheme === 'dark' && styles.textSecondaryDark]}>
+                            Volver a Iniciar Sesión
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -97,10 +82,14 @@ export default function LoginScreen() {
     );
 }
 
+// Estilos (similares a Login.tsx)
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#f5f5f5",
+    },
+    containerDark: {
+        backgroundColor: "#000",
     },
     scrollContent: {
         flexGrow: 1,
@@ -110,17 +99,23 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     title: {
-        fontSize: 48,
+        fontSize: 32,
         fontWeight: "bold",
-        marginBottom: 10,
+        marginBottom: 15,
         textAlign: "center",
+        color: '#000',
     },
     subtitle: {
-        fontSize: 24,
-        fontWeight: "600",
+        fontSize: 16,
         marginBottom: 40,
         textAlign: "center",
-        color: "#333",
+        color: "#555",
+    },
+    textDark: {
+        color: '#fff',
+    },
+    textSecondaryDark: {
+        color: '#999',
     },
     input: {
         backgroundColor: "#fff",
@@ -130,6 +125,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         borderWidth: 1,
         borderColor: "#ddd",
+        color: '#000',
+    },
+    inputDark: {
+        backgroundColor: '#1c1c1e',
+        borderColor: '#38383a',
+        color: '#fff',
     },
     button: {
         backgroundColor: "#007AFF",
@@ -154,15 +155,5 @@ const styles = StyleSheet.create({
         color: "#666",
         textAlign: "center",
         fontSize: 16,
-    },
-    LinkTextBold: {
-        color: "#007AFF",
-        fontWeight: "bold",
-    },
-    LinkTextForgot: {
-        color: "#007AFF", // Color primario
-        textAlign: "center",
-        fontSize: 15,
-        fontWeight: '500',
     },
 });

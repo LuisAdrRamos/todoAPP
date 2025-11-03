@@ -170,6 +170,12 @@ export const createStyles = (theme: TodosTheme) =>
       color: theme.text, // Color del texto normal para el botón
       fontWeight: "bold",
     },
+    profileButton: {
+      flex: 1, // Ocupa el espacio disponible
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: 10, // Espacio antes del botón de salir
+    },
   });
 
 /**

@@ -9,18 +9,20 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert
 } from "react-native";
 
 import { useAuth } from "@/src/presentation/hooks/useAuth"; // NUEVO
 import { useRouter } from "expo-router"; // NUEVO
+import { Todo } from "@/src/domain/entities/Todo";
 
 export default function TodosScreenClean() {
   const [inputText, setInputText] = useState("");
-  const { todos, loading, addTodo, toggleTodo, deleteTodo } = useTodos();
-
+  const { todos, loading: todosLoading, addTodo, toggleTodo, deleteTodo } = useTodos();
   // NUEVAS LÍNEAS
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const router = useRouter();
+  const loading = todosLoading || authLoading; // Loading combinado
 
   // NUEVA FUNCIÓN
   const handleLogout = async () => {
@@ -44,6 +46,24 @@ export default function TodosScreenClean() {
     if (success) {
       setInputText("");
     }
+  };
+
+  const handleConfirmDelete = (id: string) => {
+    Alert.alert(
+      "Confirmar Eliminación",
+      "¿Estás seguro de que deseas eliminar esta tarea?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        {
+          text: "Eliminar",
+          onPress: () => deleteTodo(id),
+          style: "destructive"
+        }
+      ]
+    );
   };
 
   if (loading) {
@@ -76,7 +96,7 @@ export default function TodosScreenClean() {
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => deleteTodo(item.id)}
+        onPress={() => handleConfirmDelete(item.id)}
         style={styles.deleteButton}
       >
         <Text style={styles.deleteButtonText}>🗑️</Text>
@@ -89,12 +109,22 @@ export default function TodosScreenClean() {
 
       {/* NUEVO HEADER CON INFO DE USUARIO */}
       <View style={styles.header}>
-        <View style={styles.userAvatarPlaceholder}>
-          <Text style={styles.userAvatarText}>
-            {user?.displayName?.charAt(0) || "U"}
+
+        {/* Botón de Perfil (Avatar y Nombre) */}
+        <TouchableOpacity
+          style={styles.profileButton} // Necesitas añadir este estilo
+          onPress={() => router.push('/(tabs)/profile' as any)}
+        >
+          <View style={styles.userAvatarPlaceholder}>
+            <Text style={styles.userAvatarText}>
+              {user?.displayName?.charAt(0) || "U"}
+            </Text>
+          </View>
+          <Text style={styles.userName} numberOfLines={1}>
+            {user?.displayName || "Usuario"}
           </Text>
-        </View>
-        <Text style={styles.userName}>{user?.displayName || "Usuario"}</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
           <Text style={styles.logoutText}>Salir</Text>
         </TouchableOpacity>
@@ -117,7 +147,7 @@ export default function TodosScreenClean() {
 
       <FlatList
         data={todos}
-        renderItem={renderTodo}
+        renderItem={renderTodo} // Asegúrate que renderTodo esté definido
         keyExtractor={(item) => item.id.toString()}
         style={styles.list}
         contentContainerStyle={styles.listContent}

@@ -1,19 +1,19 @@
 import {
-    collection,
     addDoc,
-    getDocs,
+    collection,
+    deleteDoc,
     doc,
     getDoc,
-    updateDoc,
-    deleteDoc,
-    query,
+    getDocs,
     orderBy,
-    where,
+    query,
     Timestamp,
+    updateDoc,
+    where,
 } from "firebase/firestore";
 
+import { db } from "@/firebaseConfig";
 import { Todo } from "@/src/domain/entities/Todo";
-import { db } from "@/firebase";
 
 export class FirebaseTodoDataSource {
     private collectionName = "todos";

@@ -21,4 +21,7 @@ export interface AuthRepository {
     // Escuchar cambios de autenticación (observer pattern) 
     onAuthStateChanged(callback: (user: User | null) => void): () => void;
 
+    updateProfile(id: string, displayName: string): Promise<User>;
+
+    forgotPassword(email: string): Promise<void>;
 } 

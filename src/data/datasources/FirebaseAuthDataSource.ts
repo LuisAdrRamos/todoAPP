@@ -1,14 +1,15 @@
+import { auth, db } from "@/firebaseConfig";
+import { User } from "@/src/domain/entities/User";
 import {
     createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
     onAuthStateChanged as firebaseOnAuthStateChanged,
-    updateProfile,
     User as FirebaseUser,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    signOut,
+    updateProfile,
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { auth, db } from "@/firebase";
-import { User } from "@/src/domain/entities/User";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 export class FirebaseAuthDataSource {
 
@@ -70,6 +71,37 @@ export class FirebaseAuthDataSource {
             }
 
             throw new Error(error.message || "Error al registrar usuario");
+        }
+    }
+
+        // ===== ACTUALIZAR PERFIL (RETO 2) =====
+    async updateProfile(id: string, displayName: string): Promise<User> {
+        try {
+            const firebaseUser = auth.currentUser;
+            
+            if (!firebaseUser || firebaseUser.uid !== id) {
+                throw new Error("No estás autorizado para modificar este perfil.");
+            }
+
+            // 1. Actualizar el perfil en Firebase Auth
+            await updateProfile(firebaseUser, { displayName });
+
+            // 2. Actualizar el documento en Firestore
+            await updateDoc(doc(db, "users", id), {
+                displayName,
+            });
+
+            // 3. Retornar el nuevo objeto User
+            return {
+                id: firebaseUser.uid,
+                email: firebaseUser.email || "",
+                displayName: displayName,
+                // Usamos la fecha de creación original o actual si no está disponible
+                createdAt: new Date(firebaseUser.metadata.creationTime || Date.now()),
+            };
+        } catch (error: any) {
+            console.error("Error updating profile:", error);
+            throw new Error(error.message || "Error al actualizar el perfil.");
         }
     }
 
@@ -145,5 +177,20 @@ export class FirebaseAuthDataSource {
                 callback(null);
             }
         });
+    }
+
+    async forgotPassword(email: string): Promise<void> {
+        try {
+            await sendPasswordResetEmail(auth, email);
+        } catch (error: any) {
+            console.error("Error sending password reset email:", error);
+            // Manejamos errores comunes
+            if (error.code === "auth/user-not-found") {
+                // Por seguridad, a veces es mejor no revelar si el usuario existe,
+                // pero para este deber, ser explícito es útil.
+                throw new Error("No existe un usuario registrado con ese email.");
+            }
+            throw new Error(error.message || "Error al enviar email de recuperación");
+        }
     }
 }
