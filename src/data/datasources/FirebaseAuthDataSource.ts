@@ -74,34 +74,29 @@ export class FirebaseAuthDataSource {
         }
     }
 
-        // ===== ACTUALIZAR PERFIL (RETO 2) =====
     async updateProfile(id: string, displayName: string): Promise<User> {
         try {
             const firebaseUser = auth.currentUser;
-            
-            if (!firebaseUser || firebaseUser.uid !== id) {
-                throw new Error("No estás autorizado para modificar este perfil.");
-            }
+            if (!firebaseUser) throw new Error("Usuario no autenticado");
 
-            // 1. Actualizar el perfil en Firebase Auth
+            // 1. Actualizar en Firebase Auth
             await updateProfile(firebaseUser, { displayName });
 
-            // 2. Actualizar el documento en Firestore
-            await updateDoc(doc(db, "users", id), {
-                displayName,
-            });
+            // 2. Actualizar en Firestore
+            await updateDoc(doc(db, "users", id), { displayName });
 
-            // 3. Retornar el nuevo objeto User
+            // 3. Devolver el usuario actualizado
             return {
                 id: firebaseUser.uid,
                 email: firebaseUser.email || "",
+                // El displayName se toma directamente del valor nuevo
                 displayName: displayName,
-                // Usamos la fecha de creación original o actual si no está disponible
                 createdAt: new Date(firebaseUser.metadata.creationTime || Date.now()),
             };
+
         } catch (error: any) {
-            console.error("Error updating profile:", error);
-            throw new Error(error.message || "Error al actualizar el perfil.");
+            // ... (manejo de errores) ...
+            throw new Error(error.message || "Error al actualizar perfil");
         }
     }
 

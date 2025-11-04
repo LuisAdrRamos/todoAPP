@@ -58,10 +58,9 @@ export const useAuth = () => {
                 user.id,
                 displayName
             );
-
-            // Actualizar el estado local con el usuario actualizado
             setUser(updatedUser);
             return true;
+
         } catch (err: any) {
             setError(err.message);
             return false;
@@ -74,9 +73,9 @@ export const useAuth = () => {
         try {
             setLoading(true);
             setError(null);
-            
+
             await container.forgotPassword.execute(email);
-            
+
             return true; // Éxito (email enviado o no encontrado, manejado por el backend)
         } catch (err: any) {
             setError(err.message);

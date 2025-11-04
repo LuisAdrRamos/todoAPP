@@ -42,7 +42,10 @@ export default function ProfileScreen() {
 
         if (success) {
             Alert.alert('Éxito', 'Tu perfil ha sido actualizado.', [
-                { text: 'OK', onPress: () => router.back() },
+                {
+                    text: 'OK',
+                    onPress: () => router.replace('/(tabs)/todos')
+                },
             ]);
         } else {
             Alert.alert('Error', error || 'No se pudo actualizar el perfil.');
